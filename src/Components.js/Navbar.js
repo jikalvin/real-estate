@@ -2,9 +2,12 @@
  import logo from '../images/logo.webp'
  import { Link } from 'react-router-dom';
  
+ import { useFirebaseAuth } from '../Files/FirebaseAuthContext';
 
 
  export default function Navbar() {
+  const user = useFirebaseAuth();
+
    return (
      <nav>
         <a href='#' className='logo'>
@@ -20,8 +23,9 @@
              <Link to='/'><li><a href='#' className='active'>Home</a></li></Link>
              <li><a href='#'>Guest Houses</a></li>
              <li><a href='#'>Apartments</a></li>
-             <li><a href='Contact'>Studios</a></li>
-             <li><a href='Contact'>Single Rooms</a></li>
+             {/* {user && <Link to='/Dash'><li><a href='#' className='active'>Dashboard</a></li></Link>} */}
+             <li><a href='Login'>Admin</a></li>
+             <li><a href='Contact'>Contact</a></li>
        </ul>
 
         
