@@ -13,6 +13,7 @@ export default function Login() {
     const navigate = useNavigate()
 
     const signedIn = () => toast("You are signed In")
+    const errorM = () => toast("Wrong email or password")
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -30,6 +31,7 @@ export default function Login() {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            errorM()
             console.log(errorMessage)
         });
         setLoading(!isLoading)

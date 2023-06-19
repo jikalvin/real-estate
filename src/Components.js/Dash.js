@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography } from 'mdb-react-ui-kit';
-import { useFirebaseAuth } from '../Files/FirebaseAuthContext';
-import Table from './Table';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uuidv4 } from '@firebase/util';
+import { useHouses } from '../Files/getData';
 
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 import { Button, Form } from 'react-bootstrap';
 
@@ -18,6 +18,7 @@ export default function Dash() {
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { houses, isLoading } = useHouses();
 
   const [address, setAddress] = useState()
   const [name, setName] = useState()
@@ -34,6 +35,7 @@ export default function Dash() {
 
   const signedOut = () => toast("You are signed out");
   const added = () => toast("House has been added!");
+  const deleted = () => toast("House has been Deleted!");
 
   function handleLogout(){
     signOut(auth).then(() => {
@@ -43,6 +45,13 @@ export default function Dash() {
     }).catch((error) => {
       console.log("Error Occurred")
     });
+  }
+
+  async function handleDelete(id){
+    console.log(id)
+    await deleteDoc(doc(db, "houses", id));
+
+    deleted()
   }
 
   function handleShow(){
@@ -169,9 +178,54 @@ export default function Dash() {
                 </div>
                   }
                   <div className="p-4" style={{ backgroundColor: '#f8f9fa' }}>
-                    <Table />
+                  <MDBTable align='middle'>
+                    <MDBTableHead>
+                      <tr>
+                        <th scope='col'>Name</th>
+                        <th scope='col'>Address</th>
+                        <th scope='col'>Deactivate</th>
+                        <th scope='col'>Price</th>
+                        <th scope='col'>City</th>
+                      </tr>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                      {console.log(houses)}
+                      {houses && houses.map((item, index) => 
+                        <tr>
+                        <td>
+                          <div className='d-flex align-items-center'>
+                            <img
+                              src={item.image}
+                              alt=''
+                              style={{ width: '45px', height: '45px' }}
+                              className='rounded-circle'
+                            />
+                            <div className='ms-3'>
+                              <p className='fw-bold mb-1'>{item.name}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          {item.address}
+                        </td>
+                        <td>
+                          <button className='btn btn-danger' onClick={(e) => handleDelete(item.name)}>
+                            Deactive
+                          </button>
+                        </td>
+                        <td>{item.price}</td>
+                        <td>
+                          <MDBBtn color='link' rounded size='sm'>
+                            {item.country}
+                          </MDBBtn>
+                        </td>
+                      </tr>
+                      )}
+                    </MDBTableBody>
+                  </MDBTable>
                   </div>
                 </div>
+                {isLoading && <div>We are loading data...</div>}
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <MDBCardText className="lead fw-normal mb-0">Recent photos</MDBCardText>
                   <MDBCardText className="mb-0"><a href="#!" className="text-muted">Show all</a></MDBCardText>
