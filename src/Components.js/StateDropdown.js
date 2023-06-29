@@ -10,7 +10,7 @@ const StateDropdown = () => {
   const { country, setCountry, countries } = useContext(HouseContext);
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <Menu as='div' className='dropdown relative'>
+    <Menu as='div' className='tw-dropdown relative'>
       <Menu.Button
         onClick={() => setIsOpen(!isOpen)}
         className='dropdown-btn w-full text-left'>
@@ -26,14 +26,16 @@ const StateDropdown = () => {
         )}
       </Menu.Button>
 
-      <Menu.Items className='dropdown-menu'>
+      {console.log(countries)}
+
+      <Menu.Items className='tw-dropdown-menu'>
         {countries.map((country, index) => {
           return (
             <Menu.Item
               as='li'
               onClick={() => setCountry(country)}
               key={index}
-              className='cursor-pointer hover:text-violet-700 transition'
+              className='tw-cursor-pointer tw-hover:text-violet-700 transition'
             >
               {country}
             </Menu.Item>

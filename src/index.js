@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Kommunicate from '@kommunicate/kommunicate-chatbot-plugin';
 import { FirebaseAuthProvider } from './Files/FirebaseAuthContext';
 
-Kommunicate.init("2f45360e44a345cc3b401a58e66f51006")
+Kommunicate.init("15f007d4a9bc298a384310698b4780c4b")
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

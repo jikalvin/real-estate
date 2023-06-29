@@ -29,14 +29,14 @@ const PropertyDropdown = () => {
         )}
       </Menu.Button>
 
-      <Menu.Items className='dropdown-menu'>
+      <Menu.Items className='tw-dropdown-menu'>
         {properties.map((property, index) => {
           return (
             <Menu.Item
               as='li'
               onClick={() => setProperty(property)}
               key={index}
-              className='cursor-pointer hover:text-violet-700 transition'
+              className='tw-cursor-pointer tw-hover:text-violet-700 transition'
             >
               {property}
             </Menu.Item>
