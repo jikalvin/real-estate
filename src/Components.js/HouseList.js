@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { HouseContext } from './HouseContext';
 
@@ -7,9 +7,29 @@ import House from './House';
 import { Link } from 'react-router-dom';
 
 import { ImSpinner2 } from 'react-icons/im';
+import { db } from '../firebase';
+
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+
+import { useDocumentData, useCollectionData } from "react-firebase-hooks/firestore";
 
 const HouseList = () => {
   const { houses, loading } = useContext(HouseContext);
+  const [data, setData] = useState()
+
+  const q = query(collection(db, "houses"), orderBy("date", "desc"));
+  const [hses, isLoading, error] = useCollectionData(q);
+  console.log(hses)
 
   if (loading) {
     return (
@@ -30,6 +50,13 @@ const HouseList = () => {
       <div className='container mx-auto'>
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-14'>
           {houses.map((house, index) => {
+            return (
+              <Link to={`/property/${house.id}`} key={index}>
+                <House house={house} />
+              </Link>
+            );
+          })}
+          {hses && hses.map((house, index) => {
             return (
               <Link to={`/property/${house.id}`} key={index}>
                 <House house={house} />

@@ -4,6 +4,7 @@ import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import { storage } from '../firebase';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,6 +14,7 @@ import { useHouses } from '../Files/getData';
 import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 import { Button, Form } from 'react-bootstrap';
+import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage"
 
 export default function Dash() {
   const [show, setShow] = useState(false)
@@ -32,10 +34,42 @@ export default function Dash() {
   const [price, setPrice] = useState()
   const [description, setDescription] = useState()
 
+  const [percent, setPercent] = useState()
+  const [i, setI] = useState()
+
 
   const signedOut = () => toast("You are signed out");
   const added = () => toast("House has been added!");
   const deleted = () => toast("House has been Deleted!");
+
+  function handleUpload() {
+    if (!image) {
+        alert("Please choose a image first!")
+    }
+ 
+    const storageRef = ref(storage, `/images/${image.name}`)
+    const uploadTask = uploadBytesResumable(storageRef, image);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+          const percent = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+
+          // update progress
+          setPercent(percent);
+      },
+      (err) => console.log(err),
+      () => {
+          // download url
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              console.log(url);
+              setI(url)
+          });
+      }
+  ); 
+  }
 
   function handleLogout(){
     signOut(auth).then(() => {
@@ -62,7 +96,12 @@ export default function Dash() {
     const id = uuidv4();
     setLoading(!loading)
 
+    handleUpload()
+
+    console.log("Image ", i)
+
     await setDoc(doc(db, "houses", id), {
+      id: id,
       address: address,
       name: name,
       country: country,
@@ -209,7 +248,7 @@ export default function Dash() {
                           {item.address}
                         </td>
                         <td>
-                          <button className='btn btn-danger' onClick={(e) => handleDelete(item.name)}>
+                          <button className='btn btn-danger' onClick={(e) => handleDelete(item.id)}>
                             Deactive
                           </button>
                         </td>

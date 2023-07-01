@@ -1,14 +1,35 @@
 import React, { createContext, useState, useEffect } from 'react';
-// import { db } from "../firebase"
-// import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
-// import { getAuth, signOut } from "firebase/auth";
 
 import { RenthouseData } from '../data';
+import { useHouses } from '../Files/getData';
+import { db } from '../firebase';
+
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+
+import { useDocumentData, useCollectionData } from "react-firebase-hooks/firestore";
 
 export const HouseContext = createContext();
 
 
 const HouseContextProvider = ({ children }) => {
+
+  const q = query(collection(db, "houses"), orderBy("date", "desc"));
+  const [hses, isLoading, error] = useCollectionData(q);
+  console.log(hses)
+
+  const hh = [...RenthouseData, hses]
+  console.log("HH is: ", hh)
+  
   const [houses, setHouses] = useState(RenthouseData);
   const [country, setCountry] = useState('Location (any)');
   const [countries, setCountries] = useState([]);
@@ -16,21 +37,6 @@ const HouseContextProvider = ({ children }) => {
   const [properties, setProperties] = useState([]);
   const [price, setPrice] = useState('Price range (any)');
   const [loading, setLoading] = useState(false);
-
-  // async function getHouses(){
-  //   const q = query(collection(db, "houses"));
-
-  //   const querySnapshot = await getDocs(q);
-  //   querySnapshot.forEach((doc) => {
-  //       // doc.data() is never undefined for query doc snapshots
-  //       console.log(doc.id, " => ", doc.data());
-  //       setHouses([...doc.data(), doc.id])
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   getHouses()
-  // }, [])
 
   useEffect(() => {
     
